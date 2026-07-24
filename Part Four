@@ -1,0 +1,108 @@
+from graphics import *
+
+
+class TextInterface:
+    """Text-based interface."""
+
+    def display_message(self, message):
+
+        print(message)
+
+
+
+    def display_roll(self, player, roll):
+
+        print(
+            player,
+            "rolled:",
+            roll
+        )
+
+
+
+    def display_score(self, player, score):
+
+        print(
+            player,
+            "score:",
+            score
+        )
+
+
+
+    def announce_winner(self, player):
+
+        print(
+            "\nWinner:",
+            player
+        )
+
+
+
+
+
+class GUIInterface:
+    """Graphical interface using Zelle graphics."""
+
+    def __init__(self):
+
+        self.win = GraphWin(
+            "Ship Captain Crew",
+            600,
+            400
+        )
+
+
+        self.output = Text(
+            Point(300, 200),
+            ""
+        )
+
+
+        self.output.setSize(18)
+        self.output.draw(self.win)
+
+
+
+    def display_message(self, message):
+
+        self.output.setText(message)
+
+
+
+    def display_roll(self, player, roll):
+
+        message = (
+            player
+            + " rolled:\n"
+            + str(roll)
+        )
+
+        self.output.setText(message)
+
+
+
+    def display_score(self, player, score):
+
+        message = (
+            player
+            + " Score: "
+            + str(score)
+        )
+
+        self.output.setText(message)
+
+
+
+    def announce_winner(self, player):
+
+        self.output.setText(
+            "Winner: " + player
+        )
+
+
+
+    def close(self):
+
+        self.win.getMouse()
+        self.win.close()
