@@ -1,0 +1,163 @@
+from graphics import *
+import random
+import time
+
+
+class Ball:
+    """A bouncing ball with physics."""
+
+    def __init__(self, win, x, y, radius):
+
+        self.win = win
+
+        self.radius = radius
+
+        self.x = x
+        self.y = y
+
+
+        # Initial velocity
+        self.dx = random.uniform(-3, 3)
+        self.dy = random.uniform(-2, 0)
+
+
+        self.gravity = 0.3
+
+
+        self.shape = Circle(
+            Point(x, y),
+            radius
+        )
+
+
+        self.shape.draw(win)
+
+
+
+    def move(self):
+
+        # Apply gravity
+        self.dy += self.gravity
+
+
+        # Update position
+        self.x += self.dx
+        self.y += self.dy
+
+
+        # Bounce off floor
+        if self.y + self.radius >= 400:
+
+            self.y = 400 - self.radius
+
+            self.dy = -self.dy * 0.8
+
+
+
+        # Bounce off ceiling
+
+        if self.y - self.radius <= 0:
+
+            self.y = self.radius
+
+            self.dy = -self.dy
+
+
+
+        # Bounce off walls
+
+        if self.x + self.radius >= 600:
+
+            self.x = 600 - self.radius
+
+            self.dx = -self.dx
+
+
+
+        if self.x - self.radius <= 0:
+
+            self.x = self.radius
+
+            self.dx = -self.dx
+
+
+
+        self.shape.move(
+            self.dx,
+            self.dy
+        )
+
+
+
+
+
+class Simulation:
+    """Controls the bouncing ball simulation."""
+
+    def __init__(self):
+
+        self.win = GraphWin(
+            "Three Ball Physics Simulation",
+            600,
+            400
+        )
+
+
+        # Keeps balls round
+        self.win.setCoords(
+            0,
+            0,
+            600,
+            400
+        )
+
+
+        self.balls = []
+
+
+        for i in range(3):
+
+            ball = Ball(
+                self.win,
+                random.randint(100, 500),
+                50,
+                20
+            )
+
+            self.balls.append(ball)
+
+
+
+    def run(self):
+
+        while True:
+
+            for ball in self.balls:
+
+                ball.move()
+
+
+
+            time.sleep(0.02)
+
+
+
+            # Exit if mouse clicked
+
+            if self.win.checkMouse():
+
+                break
+
+
+
+        self.win.close()
+
+
+
+
+
+# Start program
+
+simulation = Simulation()
+
+simulation.run()
