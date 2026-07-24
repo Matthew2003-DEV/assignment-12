@@ -1,0 +1,263 @@
+import random
+
+
+class Die:
+    """Represents one six-sided die."""
+
+    def __init__(self):
+        self.value = 0
+        self.locked = False
+
+
+    def roll(self):
+
+        if not self.locked:
+            self.value = random.randint(1, 6)
+
+        return self.value
+
+
+
+    def set_locked(self, status):
+
+        self.locked = status
+
+
+
+    def get_value(self):
+
+        return self.value
+
+
+
+class DiceCollection:
+    """Represents the five dice used in the game."""
+
+    def __init__(self):
+
+        self.dice = []
+
+        for i in range(5):
+            self.dice.append(Die())
+
+
+
+    def roll_dice(self):
+
+        results = []
+
+        for die in self.dice:
+
+            results.append(die.roll())
+
+        return results
+
+
+
+    def reset(self):
+
+        for die in self.dice:
+
+            die.set_locked(False)
+
+
+
+    def lock_die(self, number):
+
+        self.dice[number].set_locked(True)
+
+
+
+    def get_values(self):
+
+        values = []
+
+        for die in self.dice:
+
+            values.append(die.get_value())
+
+        return values
+
+
+
+
+class Player:
+    """Represents a Ship Captain Crew player."""
+
+    def __init__(self, name):
+
+        self.name = name
+        self.score = 0
+
+
+
+    def play_turn(self):
+
+        dice = DiceCollection()
+
+        ship = False
+        captain = False
+        crew = False
+
+        cargo = []
+
+        print("\n", self.name, "'s turn")
+
+
+        for roll_number in range(3):
+
+            results = dice.roll_dice()
+
+            print(
+                "Roll",
+                roll_number + 1,
+                ":",
+                results
+            )
+
+
+            for value in results:
+
+                if value == 6 and not ship:
+
+                    ship = True
+                    print("Ship found!")
+
+                elif value == 5 and ship and not captain:
+
+                    captain = True
+                    print("Captain found!")
+
+                elif value == 4 and ship and captain and not crew:
+
+                    crew = True
+                    print("Crew found!")
+
+
+
+            if ship and captain and crew:
+
+                break
+
+
+
+        if ship and captain and crew:
+
+            cargo_score = 0
+
+            for value in dice.get_values():
+
+                if value != 6 and value != 5 and value != 4:
+
+                    cargo_score += value
+
+
+            self.score = cargo_score
+
+            print(
+                "Cargo score:",
+                self.score
+            )
+
+        else:
+
+            self.score = 0
+
+            print(
+                "Failed to get Ship Captain Crew."
+            )
+
+
+
+        return self.score
+
+
+
+
+
+class ShipCaptainCrewGame:
+    """Controls the game."""
+
+    def __init__(self, players):
+
+        self.players = players
+
+
+
+    def play(self):
+
+        scores = []
+
+
+        for player in self.players:
+
+            score = player.play_turn()
+
+            scores.append(score)
+
+
+
+        highest = max(scores)
+
+
+        winners = []
+
+
+        for player in self.players:
+
+            if player.score == highest:
+
+                winners.append(player)
+
+
+
+        if len(winners) == 1:
+
+            print(
+                "\nWinner:",
+                winners[0].name,
+                "with",
+                highest,
+                "points!"
+            )
+
+        else:
+
+            print("\nTie between:")
+
+            for player in winners:
+
+                print(player.name)
+
+
+
+
+
+# Main Program
+
+print("SHIP CAPTAIN CREW GAME")
+
+
+number = int(
+    input("Enter number of players: ")
+)
+
+
+players = []
+
+
+for i in range(number):
+
+    name = input(
+        "Enter player name: "
+    )
+
+    players.append(
+        Player(name)
+    )
+
+
+
+game = ShipCaptainCrewGame(players)
+
+game.play()
