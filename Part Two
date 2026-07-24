@@ -1,0 +1,95 @@
+from graphics import *
+
+
+class TextInterface:
+    """Text-based interface for LCR."""
+
+    def display_message(self, message):
+        print(message)
+
+
+    def display_players(self, players, pot):
+
+        print("\n--- Game Status ---")
+
+        for player in players:
+            print(
+                player.name,
+                "has",
+                player.get_chips(),
+                "chips"
+            )
+
+        print("Center Pot:", pot.get_chips())
+
+
+
+    def announce_winner(self, player):
+
+        print("\nWINNER:", player.name)
+
+
+
+class GUIInterface:
+    """Graphical interface for LCR."""
+
+    def __init__(self):
+
+        self.win = GraphWin(
+            "Left Center Right",
+            600,
+            400
+        )
+
+        self.message = Text(
+            Point(300, 50),
+            ""
+        )
+
+        self.message.setSize(18)
+        self.message.draw(self.win)
+
+
+
+    def display_message(self, message):
+
+        self.message.setText(message)
+
+
+
+    def display_players(self, players, pot):
+
+        text = ""
+
+        for player in players:
+
+            text += (
+                player.name
+                + ": "
+                + str(player.get_chips())
+                + " chips\n"
+            )
+
+
+        text += (
+            "\nCenter Pot: "
+            + str(pot.get_chips())
+        )
+
+
+        self.message.setText(text)
+
+
+
+    def announce_winner(self, player):
+
+        self.message.setText(
+            "Winner: " + player.name
+        )
+
+
+
+    def close(self):
+
+        self.win.getMouse()
+        self.win.close()
