@@ -1,0 +1,222 @@
+import random
+
+
+class Die:
+    """Represents a six-sided LCR die."""
+
+    def roll(self):
+        value = random.randint(1, 6)
+
+        if value == 1:
+            return "DOT"
+        elif value == 2:
+            return "DOT"
+        elif value == 3:
+            return "DOT"
+        elif value == 4:
+            return "L"
+        elif value == 5:
+            return "C"
+        else:
+            return "R"
+
+
+class Player:
+    """Represents a player in the game."""
+
+    def __init__(self, name):
+        self.name = name
+        self.chips = 3
+
+    def add_chip(self):
+        self.chips += 1
+
+    def remove_chip(self):
+        if self.chips > 0:
+            self.chips -= 1
+
+    def get_chips(self):
+        return self.chips
+
+    def roll(self, die):
+        results = []
+
+        # Players can only roll the number of chips they have,
+        # maximum of 3 dice.
+        number_of_dice = min(self.chips, 3)
+
+        for i in range(number_of_dice):
+            results.append(die.roll())
+
+        return results
+
+
+class Pot:
+    """Represents the center pile of chips."""
+
+    def __init__(self):
+        self.chips = 0
+
+    def add_chip(self):
+        self.chips += 1
+
+    def get_chips(self):
+        return self.chips
+
+
+class LCRGame:
+    """Controls the LCR gameplay."""
+
+    def __init__(self, players):
+        self.players = players
+        self.die = Die()
+        self.pot = Pot()
+
+
+    def get_left_player(self, index):
+        return self.players[(index - 1) % len(self.players)]
+
+
+    def get_right_player(self, index):
+        return self.players[(index + 1) % len(self.players)]
+
+
+    def take_turn(self, index):
+
+        player = self.players[index]
+
+        if player.get_chips() == 0:
+            print(player.name, "has no chips and skips.")
+            return
+
+
+        print("\n", player.name, "'s turn")
+
+        rolls = player.roll(self.die)
+
+        print("Rolls:", rolls)
+
+
+        for roll in rolls:
+
+            if roll == "L":
+                player.remove_chip()
+                self.get_left_player(index).add_chip()
+
+                print(player.name,
+                      "passes a chip to",
+                      self.get_left_player(index).name)
+
+
+            elif roll == "R":
+                player.remove_chip()
+                self.get_right_player(index).add_chip()
+
+                print(player.name,
+                      "passes a chip to",
+                      self.get_right_player(index).name)
+
+
+            elif roll == "C":
+                player.remove_chip()
+                self.pot.add_chip()
+
+                print(player.name,
+                      "puts a chip in the center.")
+
+
+            else:
+                print(player.name, "keeps their chip.")
+
+
+
+    def check_winner(self):
+
+        players_with_chips = []
+
+        for player in self.players:
+
+            if player.get_chips() > 0:
+                players_with_chips.append(player)
+
+
+        if len(players_with_chips) == 1:
+            return players_with_chips[0]
+
+        return None
+
+
+
+    def display_status(self):
+
+        print("\nCurrent Chips:")
+
+        for player in self.players:
+            print(player.name, ":", player.get_chips())
+
+        print("Center Pot:", self.pot.get_chips())
+
+
+
+    def play(self):
+
+        round_number = 1
+
+        while True:
+
+            print("\n================")
+            print("Round", round_number)
+            print("================")
+
+
+            for index in range(len(self.players)):
+
+                self.take_turn(index)
+
+                self.display_status()
+
+
+                winner = self.check_winner()
+
+
+                if winner:
+
+                    print("\nWINNER:", winner.name)
+
+                    winner.chips += self.pot.get_chips()
+
+                    print(
+                        winner.name,
+                        "receives",
+                        self.pot.get_chips(),
+                        "center chips!"
+                    )
+
+                    return
+
+
+            round_number += 1
+
+
+
+# Main Program
+
+print("LEFT CENTER RIGHT GAME")
+
+number_players = int(input("Enter number of players (3+): "))
+
+
+players = []
+
+
+for i in range(number_players):
+
+    name = input("Enter player name: ")
+
+    players.append(Player(name))
+
+
+
+game = LCRGame(players)
+
+game.play()
